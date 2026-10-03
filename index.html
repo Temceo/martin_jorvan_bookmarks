@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="script.js"></script>
+  <title>Bookmarks</title>
+</head>
+
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <main>
+    <h1>User bookmarks</h1>
+    <label for="users">Select a user</label>
+    <select name="users" id="users">
+      <option value="">Users</option>
+    </select>
+    <section class="user-details hidden">
+      <template id="bookmark-template">
+        <h2 class="title"><a href="" target="_blank" rel="noopener noreferrer" class="url"></a></h2>
+        <p class="description"></p>
+        <p class="timestamp"></p>
+        <div class="user-info">
+          <div class="likes">
+            <button class="like">Like</button>
+            <p class="like-count"></p>
+          </div>
+          <button class="copy">Copy url</button>
+        </div>
+      </template>
+      <div class="user-bookmark" id="user-bookmark">
+
+      </div>
+      <div class="bookmark-info">
+        <div class="message">User bookmark page</div>
+        <button id="add-bookmark">Add bookmark</button>
+        <button id="delete-bookmarks">Clear all bookmarks</button>
+      </div>
+      <form id="bookmark-form" class="hidden" novalidate>
+        <div class="form-field">
+          <label for="title">Add title</label>
+          <input type="text" name="title" id="title" aria-describedby="title-error" aria-invalid="false">
+          <p id="title-error" class="error-message" aria-live="polite"></p>
+        </div>
+
+        <div class="form-field">
+          <label for="url">Add url</label>
+          <input type="url" name="url" id="url" aria-describedby="url-error" aria-invalid="false">
+          <p id="url-error" class="error-message" aria-live="polite"></p>
+        </div>
+
+        <div class="form-field">
+          <label for="description">Description</label>
+          <textarea name="description" id="description" aria-describedby="description-error"
+            aria-invalid="false"></textarea>
+          <p id="description-error" class="error-message" aria-live="polite"></p>
+          <button type="submit">Save bookmark</button>
+        </div>
+
+      </form>
+
+    </section>
+
+  </main>
+</body>
+
+</html>
+
+</main>
+</body>
+
+</html>
