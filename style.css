@@ -1,0 +1,103 @@
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  justify-content: center;
+  padding-block-start: 3rem;
+}
+
+main {
+  margin-inline: auto;
+  max-width: 700px;
+}
+
+.user-bookmark {
+  max-width: 500px;
+}
+
+.user-details {
+  display: grid;
+  justify-items: center;
+  padding: 1rem;
+}
+
+.user-info {
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+h2 {
+  padding: 1rem 0;
+}
+
+.likes {
+  display: flex;
+}
+
+.user-info {
+  border-bottom: 1px solid grey;
+}
+
+.likes {
+  gap: 1rem;
+}
+
+.timestamp {
+  margin: 1rem 0;
+}
+
+.bookmark-info {
+  margin-top: 1rem;
+}
+
+#bookmark-form {
+  margin-top: 1rem;
+}
+
+.message {
+  margin-bottom: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.error-message {
+  color: #c0341d;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+  min-height: 1.2em;
+}
+
+/* for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #1a73e8;
+  outline-offset: 2px;
+}
+
+/* toast */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  padding: 0.75rem 1rem;
+  color: white;
+  background: #333;
+  border-radius: 0.25rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(-50% + 0.5rem));
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
