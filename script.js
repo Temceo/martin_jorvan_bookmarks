@@ -1,5 +1,7 @@
 import { getUserIds, getData, setData, clearData } from './storage.js';
 
+import { fields, validateField, resetFieldErrors } from './validation.js';
+
 const userSelect = document.getElementById('users');
 const userDetails = document.querySelector('.user-details');
 const userMessage = document.querySelector('.message');
@@ -104,7 +106,9 @@ function renderBookmarks(bookmarks) {
 
 function handleUserChange() {
   // remove any errors that are showing
+  resetFieldErrors();
   // hide form
+  form.classList.add('hidden');
   // get userId and userName from select
   const userId = userSelect.selectedOptions[0].value;
   const userName = userSelect.selectedOptions[0].textContent;
@@ -162,6 +166,14 @@ function saveBookmark(userId, bookmark) {
 function handleFormSubmit(e) {
   e.preventDefault();
   // check all fields are valid before completing bookmark and saving it to local storage
+  const allFieldsValid = fields.map(validateField).every(Boolean);
+
+  if (!allFieldsValid) {
+    fields
+      .find((field) => field.input.getAttribute('aria-invalid') === 'true')
+      .input.focus();
+    return;
+  }
 
   // user FormData to get the information entered
   const formData = new FormData(form);
@@ -178,10 +190,20 @@ function handleFormSubmit(e) {
   saveBookmark(bookmark.userId, bookmark);
   // reset form
   form.reset();
-
   // clear all input field errors
+  resetFieldErrors();
 }
 // field validation - loop through all fields and check if all are valid
+fields.forEach((field) => {
+  field.input.addEventListener('blur', () => {
+    validateField(field);
+
+    field.input.addEventListener('input', () => {
+      if (field.input.addEventListener('aria-invalid') === 'true')
+        validateField(field);
+    });
+  });
+});
 
 // event listeners
 // event listener for userSelect change
