@@ -218,3 +218,19 @@ addBookmarkButton.addEventListener('click', handleBookmarkClick);
 deleteBookmarksButton.addEventListener('click', handleBookmarkDeletions);
 // event listener for form submission
 form.addEventListener('submit', handleFormSubmit);
+
+// toast to confirm url has been copied
+let toastTimeout;
+
+function showToast(message) {
+  if (!toast) return;
+
+  clearTimeout(toastTimeout);
+
+  toast.textContent = message;
+  toast.classList.add('is-visible');
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('is-visible');
+  }, 3000);
+}
