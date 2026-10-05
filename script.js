@@ -48,10 +48,15 @@ function formatTimestamp(timestamp) {
 }
 
 function updateBookmark(userId, bookmarkId) {
-  // get userId and bookmarkId
   // get user bookmarks from local storage
-  // find the relevant bookmark and update the like count. set updated bookmark in local storage
+  const bookmarks = getData(userId);
+  // find the relevant bookmark and update the like count.
+  const bookmark = bookmarks.find((item) => item.id === bookmarkId);
   // if no bookmark return
+  if (!bookmark) return;
+  // set updated bookmark in local storage
+  bookmark.likes++;
+  setData(userId, bookmarks);
 }
 
 function createBookmarkCard(bookmark) {
@@ -195,13 +200,12 @@ function handleFormSubmit(e) {
 }
 // field validation - loop through all fields and check if all are valid
 fields.forEach((field) => {
-  field.input.addEventListener('blur', () => {
-    validateField(field);
+  field.input.addEventListener('blur', () => validateField(field));
 
-    field.input.addEventListener('input', () => {
-      if (field.input.addEventListener('aria-invalid') === 'true')
-        validateField(field);
-    });
+  field.input.addEventListener('input', () => {
+    if (field.input.getAttribute('aria-invalid') === 'true') {
+      validateField(field);
+    }
   });
 });
 
