@@ -149,6 +149,9 @@ function handleBookmarkDeletions() {
   // clear bookmarklist and show message stating user has no bookmarks
   bookmarkList.replaceChildren();
   displayBookmarkCount(userName, []);
+
+  // clear any previous validation errors
+  resetFieldErrors();
 }
 
 function displayBookmarkCount(userName, bookmarks) {
