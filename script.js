@@ -138,11 +138,6 @@ function handleUserChange() {
   renderBookmarks(userData);
 }
 
-function handleBookmarkClick() {
-  // show form if user clicks on add bookmark button
-  form.classList.remove("hidden");
-}
-
 function handleBookmarkDeletions() {
   // get userId and userName from select
   const userId = userSelect.selectedOptions[0].value;
@@ -224,7 +219,9 @@ fields.forEach((field) => {
 // event listener for userSelect change
 userSelect.addEventListener("change", handleUserChange);
 // event listener for adding bookmark
-addBookmarkButton.addEventListener("click", handleBookmarkClick);
+addBookmarkButton.addEventListener("click", () => {
+  form.classList.remove("hidden");
+});
 // event listener for deleting bookmark
 deleteBookmarksButton.addEventListener("click", handleBookmarkDeletions);
 // event listener for form submission
