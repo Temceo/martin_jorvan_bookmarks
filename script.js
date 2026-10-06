@@ -19,15 +19,18 @@ const USERS = [
   "Tom Cane",
   "Mary Johnson",
 ];
-
+//replaced forEach with map to create and return
 function populateDropdown() {
   const userIds = getUserIds();
-  USERS.forEach((user, index) => {
+
+  const options = USERS.map((user, index) => {
     const option = document.createElement("option");
     option.value = userIds[index];
     option.textContent = user;
-    userSelect.appendChild(option);
+    return option;
   });
+
+  userSelect.append(...options);
 }
 
 populateDropdown();
@@ -135,11 +138,6 @@ function handleUserChange() {
   renderBookmarks(userData);
 }
 
-function handleBookmarkClick() {
-  // show form if user clicks on add bookmark button
-  form.classList.remove("hidden");
-}
-
 function handleBookmarkDeletions() {
   // get userId and userName from select
   const userId = userSelect.selectedOptions[0].value;
@@ -149,6 +147,9 @@ function handleBookmarkDeletions() {
   // clear bookmarklist and show message stating user has no bookmarks
   bookmarkList.replaceChildren();
   displayBookmarkCount(userName, []);
+
+  // clear any previous validation errors
+  resetFieldErrors();
 }
 
 function displayBookmarkCount(userName, bookmarks) {
@@ -218,7 +219,9 @@ fields.forEach((field) => {
 // event listener for userSelect change
 userSelect.addEventListener("change", handleUserChange);
 // event listener for adding bookmark
-addBookmarkButton.addEventListener("click", handleBookmarkClick);
+addBookmarkButton.addEventListener("click", () => {
+  form.classList.remove("hidden");
+});
 // event listener for deleting bookmark
 deleteBookmarksButton.addEventListener("click", handleBookmarkDeletions);
 // event listener for form submission
