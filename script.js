@@ -19,15 +19,18 @@ const USERS = [
   "Tom Cane",
   "Mary Johnson",
 ];
-
+//replaced forEach with map to create and return
 function populateDropdown() {
   const userIds = getUserIds();
-  USERS.forEach((user, index) => {
+
+  const options = USERS.map((user, index) => {
     const option = document.createElement("option");
     option.value = userIds[index];
     option.textContent = user;
-    userSelect.appendChild(option);
+    return option;
   });
+
+  userSelect.append(...options);
 }
 
 populateDropdown();
