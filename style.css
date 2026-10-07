@@ -26,6 +26,7 @@ main {
   display: flex;
   padding: 1rem;
   gap: 1rem;
+  border-bottom: 1px solid grey;
 }
 
 h2 {
@@ -34,13 +35,6 @@ h2 {
 
 .likes {
   display: flex;
-}
-
-.user-info {
-  border-bottom: 1px solid grey;
-}
-
-.likes {
   gap: 1rem;
 }
 
@@ -75,7 +69,8 @@ h2 {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-select:focus-visible {
+select:focus-visible,
+textarea:focus-visible {
   outline: 3px solid #1a73e8;
   outline-offset: 2px;
 }
