@@ -1,102 +1,96 @@
-import { getUserIds, getData, setData, clearData } from "./storage.js";
+import { getUserIds, getData, setData, clearData } from './storage.js';
 
-import { fields, validateField, resetFieldErrors } from "./validation.js";
+import { fields, validateField, resetFieldErrors } from './validation.js';
 
-const userSelect = document.getElementById("users");
-const userDetails = document.querySelector(".user-details");
-const userMessage = document.querySelector(".message");
-const addBookmarkButton = document.getElementById("add-bookmark");
-const deleteBookmarksButton = document.getElementById("delete-bookmarks");
-const form = document.getElementById("bookmark-form");
-const bookmarkInfo = document.querySelector(".bookmark-info");
-const bookmarkList = document.getElementById("user-bookmark");
-const toast = document.getElementById("toast");
+const userSelect = document.getElementById('users');
+const userDetails = document.querySelector('.user-details');
+const userMessage = document.querySelector('.message');
+const addBookmarkButton = document.getElementById('add-bookmark');
+const deleteBookmarksButton = document.getElementById('delete-bookmarks');
+const form = document.getElementById('bookmark-form');
+const bookmarkInfo = document.querySelector('.bookmark-info');
+const bookmarkList = document.getElementById('user-bookmark');
+const toast = document.getElementById('toast');
 
 const USERS = [
-  "Jason Brown",
-  "Jorvan White",
-  "Betty Smith",
-  "Tom Cane",
-  "Mary Johnson",
+  'Jason Brown',
+  'Jorvan White',
+  'Betty Smith',
+  'Tom Cane',
+  'Mary Johnson',
 ];
-//replaced forEach with map to create and return
+
 function populateDropdown() {
   const userIds = getUserIds();
-
   const options = USERS.map((user, index) => {
-    const option = document.createElement("option");
+    const option = document.createElement('option');
     option.value = userIds[index];
     option.textContent = user;
     return option;
   });
-
   userSelect.append(...options);
 }
 
 populateDropdown();
 
 function formatTimestamp(timestamp) {
-  // set timestamp in new Date
   const date = new Date(timestamp);
-  // format using toLocaleDateString - gb - day, month, year, hour, minute
-  const formattedDateTime = date.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  const formattedDateTime = date.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
-  // return formatted date
   return `Date published: ${formattedDateTime}`;
 }
 
 function updateBookmark(userId, bookmarkId) {
-  // get user bookmarks from local storage
   const bookmarks = getData(userId);
-  // find the relevant bookmark and update the like count.
   const bookmark = bookmarks.find((item) => item.id === bookmarkId);
-  // if no bookmark return
+
   if (!bookmark) return;
-  // set updated bookmark in local storage
+
   bookmark.likes++;
+
   setData(userId, bookmarks);
 }
 
 function createBookmarkCard(bookmark) {
   const card = document
-    .getElementById("bookmark-template")
+    .getElementById('bookmark-template')
     .content.cloneNode(true);
 
-  const titleLink = card.querySelector("h2 a");
+  const titleLink = card.querySelector('h2 a');
   titleLink.textContent = bookmark.title;
   titleLink.href = bookmark.url;
 
-  card.querySelector(".description").textContent =
+  card.querySelector('.description').textContent =
     `Description: ${bookmark.description}`;
 
-  card.querySelector(".timestamp").textContent = formatTimestamp(
-    bookmark.timestamp,
+  card.querySelector('.timestamp').textContent = formatTimestamp(
+    bookmark.timestamp
   );
 
-  const likeButton = card.querySelector(".like");
-  const likeCount = card.querySelector(".like-count");
+  const likeButton = card.querySelector('.like');
+  const likeCount = card.querySelector('.like-count');
 
   bookmark.likes = Number(bookmark.likes) || 0;
   likeCount.textContent = `Likes: ${bookmark.likes}`;
 
-  likeButton.addEventListener("click", () => {
+  likeButton.addEventListener('click', () => {
     bookmark.likes += 1;
     likeCount.textContent = `Likes: ${bookmark.likes}`;
     updateBookmark(bookmark.userId, bookmark.id);
   });
 
-  const copyButton = card.querySelector(".copy");
-  copyButton.addEventListener("click", async () => {
+  const copyButton = card.querySelector('.copy');
+  copyButton.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(bookmark.url);
-      showToast("URL copied to clipboard");
+      showToast('URL copied to clipboard');
     } catch {
-      showToast("Unable to copy URL to clipboard");
+      showToast('Unable to copy URL to clipboard');
     }
   });
 
@@ -105,55 +99,46 @@ function createBookmarkCard(bookmark) {
 
 function renderBookmarks(bookmarks) {
   const sortedBookmarks = [...bookmarks].sort(
-    (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
   );
   const cards = sortedBookmarks.map(createBookmarkCard);
   bookmarkList.replaceChildren(...cards);
-  bookmarkList.classList.remove("hidden");
+  bookmarkList.classList.remove('hidden');
 }
 
 function handleUserChange() {
-  // remove any errors that are showing
   resetFieldErrors();
-  // hide form
-  form.classList.add("hidden");
-  // get userId and userName from select
+  form.classList.add('hidden');
+
   const userId = userSelect.selectedOptions[0].value;
   const userName = userSelect.selectedOptions[0].textContent;
   if (!userId) {
-    // if userId is blank hide bookmark info, and make sure bookmarklist is empty
-    bookmarkInfo.classList.add("hidden");
-    userMessage.textContent = "";
+    bookmarkInfo.classList.add('hidden');
+    userMessage.textContent = '';
     bookmarkList.replaceChildren();
     return;
   }
 
-  // if there is a userId get the user data from local storage
-  // if user has no data set it to empty array and show information regarding bookmark status
-  // if user has bookmarks display them on the bookmarklist
   const userData = getData(userId) ?? [];
-  bookmarkInfo.classList.remove("hidden");
-  userDetails.classList.remove("hidden");
+  bookmarkInfo.classList.remove('hidden');
+  userDetails.classList.remove('hidden');
   displayBookmarkCount(userName, userData);
   renderBookmarks(userData);
 }
 
 function handleBookmarkDeletions() {
-  // get userId and userName from select
   const userId = userSelect.selectedOptions[0].value;
   const userName = userSelect.selectedOptions[0].textContent;
-  // clearData in local storage
+
   clearData(userId);
-  // clear bookmarklist and show message stating user has no bookmarks
+
   bookmarkList.replaceChildren();
   displayBookmarkCount(userName, []);
 
-  // clear any previous validation errors
   resetFieldErrors();
 }
 
 function displayBookmarkCount(userName, bookmarks) {
-  // display message showing how many bookmarks the user has
   if (bookmarks.length === 0) {
     userMessage.textContent = `${userName} currently has no bookmarks`;
     return;
@@ -162,83 +147,72 @@ function displayBookmarkCount(userName, bookmarks) {
 }
 
 function saveBookmark(userId, bookmark) {
-  // hide form
-  form.classList.add("hidden");
-  // get userbookmarks from local storage or return empty array
+  form.classList.add('hidden');
+
   const bookmarks = getData(userId) ?? [];
-  // push the current bookmark into the array and save it in local storage
   bookmarks.push(bookmark);
+
   displayBookmarkCount(bookmark.userName, bookmarks);
   setData(userId, bookmarks);
-  // render current bookmarks on the page
   renderBookmarks(bookmarks);
 }
 
 function handleFormSubmit(e) {
   e.preventDefault();
-  // check all fields are valid before completing bookmark and saving it to local storage
+
   const allFieldsValid = fields.map(validateField).every(Boolean);
 
   if (!allFieldsValid) {
     fields
-      .find((field) => field.input.getAttribute("aria-invalid") === "true")
+      .find((field) => field.input.getAttribute('aria-invalid') === 'true')
       .input.focus();
     return;
   }
 
-  // user FormData to get the information entered
   const formData = new FormData(form);
   const bookmark = {
     id: crypto.randomUUID(),
     userId: userSelect.selectedOptions[0].value,
     userName: userSelect.selectedOptions[0].textContent,
-    title: formData.get("title").trim(),
-    description: formData.get("description").trim(),
-    url: formData.get("url").trim(),
+    title: formData.get('title').trim(),
+    description: formData.get('description').trim(),
+    url: formData.get('url').trim(),
     likes: 0,
     timestamp: new Date().toISOString(),
   };
   saveBookmark(bookmark.userId, bookmark);
-  // reset form
   form.reset();
-  // clear all input field errors
   resetFieldErrors();
 }
-// field validation - loop through all fields and check if all are valid
-fields.forEach((field) => {
-  field.input.addEventListener("blur", () => validateField(field));
 
-  field.input.addEventListener("input", () => {
-    if (field.input.getAttribute("aria-invalid") === "true") {
+fields.forEach((field) => {
+  field.input.addEventListener('blur', () => validateField(field));
+
+  field.input.addEventListener('input', () => {
+    if (field.input.getAttribute('aria-invalid') === 'true') {
       validateField(field);
     }
   });
 });
 
 // event listeners
-// event listener for userSelect change
-userSelect.addEventListener("change", handleUserChange);
-// event listener for adding bookmark
-addBookmarkButton.addEventListener("click", () => {
-  form.classList.remove("hidden");
+userSelect.addEventListener('change', handleUserChange);
+addBookmarkButton.addEventListener('click', () => {
+  form.classList.remove('hidden');
 });
-// event listener for deleting bookmark
-deleteBookmarksButton.addEventListener("click", handleBookmarkDeletions);
-// event listener for form submission
-form.addEventListener("submit", handleFormSubmit);
+deleteBookmarksButton.addEventListener('click', handleBookmarkDeletions);
+form.addEventListener('submit', handleFormSubmit);
 
 // toast to confirm url has been copied
 let toastTimeout;
 
 function showToast(message) {
-  if (!toast) return;
-
   clearTimeout(toastTimeout);
 
   toast.textContent = message;
-  toast.classList.add("is-visible");
+  toast.classList.add('is-visible');
 
   toastTimeout = setTimeout(() => {
-    toast.classList.remove("is-visible");
+    toast.classList.remove('is-visible');
   }, 3000);
 }
